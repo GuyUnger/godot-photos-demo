@@ -1,0 +1,188 @@
+[gd_scene load_steps=15 format=3 uid="uid://bj3x678i8v1i4"]
+
+[ext_resource type="PackedScene" path="res://assets/floor.tscn" id="1_360b3"]
+[ext_resource type="Script" path="res://game.gd" id="1_a1h85"]
+[ext_resource type="PackedScene" path="res://assets/wall.tscn" id="2_7yax2"]
+[ext_resource type="Script" path="res://player.gd" id="2_meivo"]
+
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_a34ik"]
+rayleigh_color = Color(1, 1, 1, 1)
+mie_color = Color(1, 1, 1, 1)
+ground_color = Color(1, 1, 1, 1)
+energy_multiplier = 6.0
+
+[sub_resource type="Sky" id="Sky_ccgop"]
+sky_material = SubResource("PhysicalSkyMaterial_a34ik")
+
+[sub_resource type="Environment" id="Environment_y8lco"]
+background_mode = 2
+sky = SubResource("Sky_ccgop")
+ambient_light_source = 3
+ssr_enabled = true
+ssao_enabled = true
+ssil_enabled = true
+sdfgi_enabled = true
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3acj8"]
+
+[sub_resource type="Animation" id="Animation_dp5bn"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera3D/PhotoAttach:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, -0.529559)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Camera3D/PhotoAttach:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="Animation" id="Animation_3f240"]
+resource_name = "take_photo"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Camera3D/PhotoAttach:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, -0.528), Vector3(0, 0, -1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Camera3D/PhotoAttach:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_0k01l"]
+_data = {
+"RESET": SubResource("Animation_dp5bn"),
+"take_photo": SubResource("Animation_3f240")
+}
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m7dqr"]
+metallic = 1.0
+roughness = 0.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_gywwk"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_hsgao"]
+
+[node name="Game" type="Node3D"]
+script = ExtResource("1_a1h85")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_y8lco")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.965926, 0.0669873, 0.25, -0.258819, 0.25, 0.933013, 1.58994e-08, -0.965926, 0.258819, 0, 4, 0)
+shadow_enabled = true
+
+[node name="Level" type="Node3D" parent="."]
+
+[node name="Floor" parent="Level" instance=ExtResource("1_360b3")]
+transform = Transform3D(12, 0, 0, 0, 1, 0, 0, 0, 12, -1, -0.5, 0)
+
+[node name="Wall" parent="Level" instance=ExtResource("2_7yax2")]
+transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 10, -6.5, 1, 0)
+
+[node name="Wall2" parent="Level" instance=ExtResource("2_7yax2")]
+transform = Transform3D(1, 0, 0, 0, 2, 0, 0, 0, 10, 4.5, 1, 0)
+
+[node name="Wall3" parent="Level" instance=ExtResource("2_7yax2")]
+transform = Transform3D(-4.37114e-08, 0, -10, 0, 2, 0, 1, 0, -4.37114e-07, -1, 1, 5.5)
+
+[node name="Wall4" parent="Level" instance=ExtResource("2_7yax2")]
+transform = Transform3D(-4.37114e-08, 0, -10, 0, 2, 0, 1, 0, -4.37114e-07, -1, 1, -5.5)
+
+[node name="Player" type="CharacterBody3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("2_meivo")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Player"]
+shape = SubResource("CapsuleShape3D_3acj8")
+
+[node name="Camera3D" type="Camera3D" parent="Level/Player"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+
+[node name="PhotoAttach" type="Node3D" parent="Level/Player/Camera3D"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.529559)
+visible = false
+
+[node name="RayCast3D" type="RayCast3D" parent="Level/Player/Camera3D"]
+unique_name_in_owner = true
+target_position = Vector3(0, 0, -2)
+collision_mask = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Level/Player"]
+unique_name_in_owner = true
+libraries = {
+"": SubResource("AnimationLibrary_0k01l")
+}
+
+[node name="RigidBody3D" type="RigidBody3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 9.01679, -2.35331)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/RigidBody3D"]
+material_override = SubResource("StandardMaterial3D_m7dqr")
+mesh = SubResource("SphereMesh_gywwk")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/RigidBody3D"]
+shape = SubResource("SphereShape3D_hsgao")
+
+[node name="RigidBody3D2" type="RigidBody3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.446769, 9.93951, -2.35331)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/RigidBody3D2"]
+material_override = SubResource("StandardMaterial3D_m7dqr")
+mesh = SubResource("SphereMesh_gywwk")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/RigidBody3D2"]
+shape = SubResource("SphereShape3D_hsgao")
+
+[node name="RigidBody3D3" type="RigidBody3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.534032, 9.93951, -2.93867)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/RigidBody3D3"]
+material_override = SubResource("StandardMaterial3D_m7dqr")
+mesh = SubResource("SphereMesh_gywwk")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/RigidBody3D3"]
+shape = SubResource("SphereShape3D_hsgao")
+
+[node name="RigidBody3D4" type="RigidBody3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.286221, 10.851, -3.14423)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/RigidBody3D4"]
+material_override = SubResource("StandardMaterial3D_m7dqr")
+mesh = SubResource("SphereMesh_gywwk")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/RigidBody3D4"]
+shape = SubResource("SphereShape3D_hsgao")

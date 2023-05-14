@@ -1,0 +1,22 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Shader" path="res://assets/blockout.gdshader" id="1_jcrsk"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_be8vv"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_37xt7"]
+render_priority = 0
+shader = ExtResource("1_jcrsk")
+shader_parameter/color = Color(0.278431, 0.321569, 0.356863, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_i84oc"]
+
+[node name="StaticBody3D" type="StaticBody3D"]
+transform = Transform3D(8, 0, 0, 0, 1, 0, 0, 0, 8, -1, -0.5, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_be8vv")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_37xt7")
+mesh = SubResource("BoxMesh_i84oc")
